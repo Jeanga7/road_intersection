@@ -1,11 +1,11 @@
 extern crate sdl2;
-mod cars;  // Import du module cars
+mod cars;
 
 use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::time::Duration;
-use cars::Car;  // Import de la structure Car depuis le module cars
+use cars::{Car, Direction};  // Import du module cars et de l'énumération Direction
 
 pub fn main() {
     let sdl_context = sdl2::init().unwrap();
@@ -33,10 +33,15 @@ pub fn main() {
     let center_x = window_width / 2;
     let center_y = window_height / 2;
 
-    // Créer une liste de voitures
+    // Créer une liste de voitures (horizontales et verticales)
     let mut cars = vec![
-        Car::new(0, horizontal_y1 - 25, 5),  // Voiture 1 sur la ligne horizontale 1
-        Car::new(0, horizontal_y2 - 25, 3),  // Voiture 2 sur la ligne horizontale 2
+        // Voitures se déplaçant horizontalement
+        Car::new(0, horizontal_y1 - 25, 5, Direction::Horizontal),  // Voiture sur la ligne horizontale 1
+        Car::new(0, horizontal_y2 - 25, 3, Direction::Horizontal),  // Voiture sur la ligne horizontale 2
+
+        // Voitures se déplaçant verticalement
+        Car::new(vertical_x1 - 25, 0, 4, Direction::Vertical),      // Voiture sur la ligne verticale 1
+        Car::new(vertical_x2 - 25, 0, 2, Direction::Vertical),      // Voiture sur la ligne verticale 2
     ];
 
     'running: loop {
@@ -70,9 +75,18 @@ pub fn main() {
             car.update();  // Mise à jour de la position de la voiture
             car.render(&mut canvas);  // Dessiner la voiture sur le canvas
 
-            // Réinitialiser la position de la voiture si elle sort de l'écran
-            if car.x > window_width {
-                car.x = -50;  // Réinitialiser à gauche de l'écran
+            // Réinitialiser la position des voitures horizontales
+            if let Direction::Horizontal = car.direction {
+                if car.x > window_width {
+                    car.x = -50;  // Réinitialiser à gauche de l'écran
+                }
+            }
+
+            // Réinitialiser la position des voitures verticales
+            if let Direction::Vertical = car.direction {
+                if car.y > window_height {
+                    car.y = -20;  // Réinitialiser en haut de l'écran
+                }
             }
         }
 
