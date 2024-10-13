@@ -6,7 +6,7 @@ use rand::Rng;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Direction {
     North,
     South,
@@ -43,83 +43,77 @@ impl Vehicle {
         }
     }
 
-    pub fn update(&mut self) {
-        match self.direction {
-            Direction::North => {
-                let virage = if self.turn == TurnDirection::Right { 355 } else { 405 };
-            
-                if self.y > virage {
-                    self.y -= self.speed as i32;
-                } else {
-                    match self.turn {
-                        TurnDirection::Left => self.x += self.speed as i32,
-                        TurnDirection::Right => self.x -= self.speed as i32,
-                        _ => self.y -= self.speed as i32,
-                    }
+    pub fn update(&mut self, vehicles: &[Vehicle]) {
+        let can_move = self.can_move_safely(vehicles);
+        // println!("{}", can_move);
+        let (coordinate, limit, forward, backward, perpendicular) = match self.direction {
+            Direction::North => (&mut self.y, 355, -1, 1, &mut self.x),
+            Direction::South => (&mut self.y, 405, 1, -1, &mut self.x),
+            Direction::East => (&mut self.x, 405, 1, -1, &mut self.y),
+            Direction::West => (&mut self.x, 355, -1, 1, &mut self.y),
+        };
+
+        if can_move {
+            if (self.direction == Direction::North || self.direction == Direction::West) && *coordinate > limit
+                || (self.direction == Direction::South || self.direction == Direction::East) && *coordinate < limit
+            {
+                *coordinate += forward * self.speed as i32;
+            } else {
+                // Handle turns
+                match self.turn {
+                    TurnDirection::Left => *perpendicular += self.speed as i32,
+                    TurnDirection::Right => *perpendicular += backward * self.speed as i32,
+                    TurnDirection::Straight => *coordinate += forward * self.speed as i32,
                 }
             }
-            
-            Direction::South => {
-                let virage = if self.turn == TurnDirection::Left { 355 } else { 405 };
-                if self.y < virage {
-                    self.y += self.speed as i32;
-                } else {
-                    match self.turn {
-                        TurnDirection::Left => self.x -= self.speed as i32,
-                        TurnDirection::Right => self.x += self.speed as i32,
-                        _ => self.y += self.speed as i32,
-                    }
-                }
-            }
-            Direction::East => {
-                let virage = if self.turn == TurnDirection::Left { 355 } else { 405 };
-                if self.x < virage {
-                    self.x += self.speed as i32;
-                } else {
-                    match self.turn {
-                        TurnDirection::Left => self.y += self.speed as i32,
-                        TurnDirection::Right => self.y -= self.speed as i32,
-                        _ => self.x += self.speed as i32,
-                    }
-                }
-            }
-            Direction::West => {
-                let virage = if self.turn == TurnDirection::Left { 355 } else { 405 };
-                if self.x > virage {
-                    self.x -= self.speed as i32;
-                } else {
-                    match self.turn {
-                        TurnDirection::Left => self.y += self.speed as i32,
-                        TurnDirection::Right => self.y -= self.speed as i32,
-                        _ => self.x -= self.speed as i32,
-                    }
-                }
-            }
+        } else {
+            self.speed = 0.0;
         }
+    }
+
+    fn can_move_safely(&self, vehicles: &[Vehicle]) -> bool {
+        vehicles.iter().all(|other| {
+            if self as *const _ == other as *const _ {
+                return true; 
+            }
+            self.is_safe_distance(other)
+        })
     }
 
     pub fn is_safe_distance(&self, other: &Vehicle) -> bool {
-        let dx = (self.x - other.x) as f32;
-        let dy = (self.y - other.y) as f32;
-        let distance = (dx.powi(2) + dy.powi(2)).sqrt();
-        distance >= self.safe_distance
+        let distance = match self.direction {
+            Direction::North | Direction::South => (self.y - other.y).abs(),
+            Direction::East | Direction::West => (self.x - other.x).abs(),
+        };
+        println!("Direction de self: {:?}, Direction de other: {:?}", self.direction, other.direction);
+        println!("Distance calculée: {}", distance);
+    
+        if distance != 0  {
+            return distance >= self.safe_distance as i32
+        }
+        true
     }
+    
 
     pub fn stop_at_red_light(&mut self, traffic_light: &TrafficLight) {
+        println!("{}", "red stop");
+        println!("state {}", traffic_light.is_green);
+        println!("direction {:?}", traffic_light.direction);
         if !traffic_light.is_green {
+            println!("{}", "is red");
             self.speed = 0.0;
         } else if self.speed == 0.0 {
+            println!("{}", "is green");
             self.speed = 1.0;
         }
     }
-    
 
     pub fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) {
         let color = self.get_color_based_on_route();
         canvas.set_draw_color(color);
         let vehicle_rect = match self.direction {
             Direction::East | Direction::West => Rect::new(self.x, self.y - 20, 40, 40),
-            Direction::North | Direction::South => Rect::new(self.x-20, self.y, 40, 40),
+            Direction::North | Direction::South => Rect::new(self.x - 20, self.y, 40, 40),
         };
         canvas.fill_rect(vehicle_rect).unwrap();
     }

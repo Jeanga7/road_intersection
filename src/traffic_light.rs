@@ -6,7 +6,7 @@ use sdl2::pixels::Color;
 
 use crate::vehicle::Direction;
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub struct TrafficLight {
     pub is_green: bool,
     pub direction: Direction,
@@ -55,7 +55,7 @@ impl Intersection {
 
         Intersection {
             traffic_lights: lights,
-            cycle_duration: 2000,
+            cycle_duration: 1000,
             current_phase: 0,
         }
     }
@@ -70,11 +70,11 @@ impl Intersection {
             light.update(self.cycle_duration);
         }
 
-        let is_north_south_green = self.current_phase < self.cycle_duration;
+        /* let is_north_south_green = self.current_phase <= self.cycle_duration;
         self.traffic_lights[0].is_green = !is_north_south_green; 
         self.traffic_lights[1].is_green = is_north_south_green; 
         self.traffic_lights[2].is_green = is_north_south_green;
-        self.traffic_lights[3].is_green = !is_north_south_green;
+        self.traffic_lights[3].is_green = !is_north_south_green; */
     }
 
     pub fn draw(&self, canvas: &mut Canvas<Window>) {

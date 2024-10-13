@@ -42,13 +42,13 @@ impl Road {
     
         canvas.set_draw_color(Color::RGB(255, 255, 255));
     
-        // Horizontal lines
+        // Horizontals lines
         if let Orientation::Horizontal = self.orientation {
             canvas.draw_line((self.start_x, self.start_y), (self.start_x + self.length as i32, self.start_y)).unwrap();
             canvas.draw_line((self.start_x, self.start_y + self.width as i32), (self.start_x + self.length as i32, self.start_y + self.width as i32)).unwrap();
         }
     
-        // Vertical lines
+        // Verticals lines
         for x in [350, 400, 450].iter() {
             canvas.draw_line((*x, 0), (*x, 800)).unwrap();
         }

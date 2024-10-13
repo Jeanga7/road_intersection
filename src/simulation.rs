@@ -35,34 +35,40 @@ impl Simulation {
         self.intersection.update();
         let traffic_lights = self.intersection.traffic_lights.clone();
         let vehicles_clone = self.vehicles.clone();
-
-        for (i, vehicle) in self.vehicles.iter_mut().enumerate() {
+    
+        let mut safety_checks = Vec::new();
+        for (i, vehicle) in self.vehicles.iter().enumerate() {
             let relevant_light = traffic_lights
                 .iter()
                 .find(|&light| light.direction == vehicle.direction);
-
+    
+            let mut is_safe = true;
             if let Some(light) = relevant_light {
                 if Self::is_vehicle_at_traffic_light(vehicle, light) {
-                    vehicle.stop_at_red_light(light);
-                }
-            }
-
-            let mut is_safe = true;
-            for (j, other_vehicle) in vehicles_clone.iter().enumerate() {
-                if i != j && !vehicle.is_safe_distance(other_vehicle) {
                     is_safe = false;
-                    break;
                 }
             }
-
+    
+            if is_safe {
+                for (j, other_vehicle) in vehicles_clone.iter().enumerate() {
+                    if i != j && !vehicle.is_safe_distance(other_vehicle) {
+                        is_safe = false;
+                        break;
+                    }
+                }
+            }
+            
+            safety_checks.push(is_safe);
+        }
+    
+        for (vehicle, &is_safe) in self.vehicles.iter_mut().zip(safety_checks.iter()) {
             if is_safe {
                 Self::update_vehicle_priority(vehicle, &vehicles_clone);
-                vehicle.update();
+                vehicle.update(&vehicles_clone);
             }
         }
-
-        self.vehicles
-            .retain(|v| v.x >= 0 && v.x <= 800 && v.y >= 0 && v.y <= 800);
+    
+        self.vehicles.retain(|v| v.x >= 0 && v.x <= 800 && v.y >= 0 && v.y <= 800);
     }
 
     pub fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) {
@@ -128,10 +134,20 @@ impl Simulation {
     }
 
     pub fn is_vehicle_at_traffic_light(vehicle: &Vehicle, traffic_light: &TrafficLight) -> bool {
-        let distance = match vehicle.direction {
-            Direction::North | Direction::South => (vehicle.y - 400).abs(),
-            Direction::East | Direction::West => (vehicle.x - 400).abs(),
-        };
-        distance < 10 && vehicle.direction == traffic_light.direction
+        match vehicle.direction {
+            Direction::North => {
+                (vehicle.y - 400).abs() < 55 && vehicle.direction == traffic_light.direction
+            }
+            Direction::South => {
+                // println!("{}",  (vehicle.y - 350).abs() < 55 && vehicle.direction == traffic_light.direction);
+                (vehicle.y - 355).abs() < 50 && vehicle.direction == traffic_light.direction
+            }
+            Direction::East => {
+                (vehicle.x - 355).abs() < 50 && vehicle.direction == traffic_light.direction
+            }
+            Direction::West => {
+                (vehicle.x - 400).abs() < 55 && vehicle.direction == traffic_light.direction
+            }
+        }
     }
 }
