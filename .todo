@@ -9,8 +9,8 @@ TODO LIST: Simulation de Contrôle de Trafic en SDL2
 ### 2. Création des Objets Principaux
 #### 2.1. Route
 Créer une classe ou une structure pour représenter une route avec deux voies dans chaque direction (nordsud, estouest).
- ☐ Définir les positions et dimensions des routes pour qu'elles se croisent en formant une intersection.
- ☐ Définir une méthode pour dessiner les routes à l’écran.
+ ✔ Définir les positions et dimensions des routes pour qu'elles se croisent en formant une intersection. @done(24-10-13 03:35)
+ ✔ Définir une méthode pour dessiner les routes à l’écran. @done(24-10-13 03:35)
 
 #### 2.2. Feux de circulation
  ☐ Créer une classe ou structure pour représenter un feu de circulation (deux états : rouge et vert).

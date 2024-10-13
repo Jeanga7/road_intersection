@@ -15,8 +15,11 @@ pub use vehicle::*;
 fn main() {
     let mut simulation = Simulation::new();
     let mut graphics = Graphics::new("ROAD INTERSECTION", 800, 800);
+    let mut intersection = Intersection::new();
 
     let mut event_pump = graphics.context.event_pump().unwrap();
+
+
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -26,9 +29,12 @@ fn main() {
         }
 
         simulation.update();
+        intersection.update();
 
         graphics.clear();
         simulation.render(&mut graphics.canvas);
+        intersection.draw(&mut graphics.canvas);
+
         graphics.present();
     }
 }
