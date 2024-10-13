@@ -2,48 +2,48 @@
 TODO LIST: Simulation de Contrôle de Trafic en SDL2
 
 ### 1. Initial Setup
-- [ ] Installer la bibliothèque SDL2 et les dépendances nécessaires.
-- [ ] Configurer le projet pour utiliser SDL2 (initialisation de la fenêtre, du rendu, etc.).
-- [ ] Définir la structure principale du projet (gestion des événements, boucle de jeu/simulation).
+✔ Installer la bibliothèque SDL2 et les dépendances nécessaires. @done(24-10-13 02:40)
+✔ Configurer le projet pour utiliser SDL2 (initialisation de la fenêtre, du rendu, etc.). @done(24-10-13 02:40)
+✔ Définir la structure principale du projet (gestion des événements, boucle de jeu/simulation). @done(24-10-13 02:40)
 
 ### 2. Création des Objets Principaux
 #### 2.1. Route
-- [ ] Créer une classe ou une structure pour représenter une route avec deux voies dans chaque direction (nord-sud, est-ouest).
-- [ ] Définir les positions et dimensions des routes pour qu'elles se croisent en formant une intersection.
-- [ ] Définir une méthode pour dessiner les routes à l’écran.
+Créer une classe ou une structure pour représenter une route avec deux voies dans chaque direction (nordsud, estouest).
+ ☐ Définir les positions et dimensions des routes pour qu'elles se croisent en formant une intersection.
+ ☐ Définir une méthode pour dessiner les routes à l’écran.
 
 #### 2.2. Feux de circulation
-- [ ] Créer une classe ou structure pour représenter un feu de circulation (deux états : rouge et vert).
-- [ ] Positionner les feux à chaque entrée de l'intersection.
-- [ ] Définir un système de contrôle des feux de circulation (algorithme pour changer les états des feux en fonction du temps ou du nombre de véhicules).
-- [ ] Ajouter une méthode pour dessiner les feux à l’écran avec des couleurs distinctes.
+ ☐ Créer une classe ou structure pour représenter un feu de circulation (deux états : rouge et vert).
+ ☐ Positionner les feux à chaque entrée de l'intersection.
+ ☐ Définir un système de contrôle des feux de circulation (algorithme pour changer les états des feux en fonction du temps ou du nombre de véhicules).
+ ☐ Ajouter une méthode pour dessiner les feux à l’écran avec des couleurs distinctes.
 
 #### 2.3. Véhicules
-- [ ] Créer une classe ou structure pour représenter un véhicule (couleur, direction, vitesse, route choisie).
-- [ ] Ajouter des propriétés pour gérer la position, la vitesse et la distance de sécurité entre les véhicules.
-- [ ] Définir des règles pour que les véhicules suivent leur itinéraire (tout droit, tourner à gauche, tourner à droite).
-- [ ] Implémenter les règles de sécurité (arrêt aux feux rouges, maintien de la distance avec les véhicules devant).
+ ☐ Créer une classe ou structure pour représenter un véhicule (couleur, direction, vitesse, route choisie).
+ ☐ Ajouter des propriétés pour gérer la position, la vitesse et la distance de sécurité entre les véhicules.
+ ☐ Définir des règles pour que les véhicules suivent leur itinéraire (tout droit, tourner à gauche, tourner à droite).
+ ☐ Implémenter les règles de sécurité (arrêt aux feux rouges, maintien de la distance avec les véhicules devant).
 
 ### 3. Interaction avec l’utilisateur
-- [ ] Capturer les entrées du clavier pour générer des véhicules aux points de départ (flèches pour générer des véhicules du nord, sud, est, ouest, et ‘r’ pour direction aléatoire).
-- [ ] Assurer une distance de sécurité minimale lors de la génération des véhicules (éviter le "spam" de création).
-- [ ] Ajouter une touche 'Esc' pour terminer la simulation.
+ ☐ Capturer les entrées du clavier pour générer des véhicules aux points de départ (flèches pour générer des véhicules du nord, sud, est, ouest, et ‘r’ pour direction aléatoire).
+ ☐ Assurer une distance de sécurité minimale lors de la génération des véhicules (éviter le "spam" de création).
+ ☐ Ajouter une touche 'Esc' pour terminer la simulation.
 
 ### 4. Gestion de la Simulation
-- [ ] Créer une boucle de simulation pour faire avancer les véhicules et vérifier les conditions de collision et de feu de circulation.
-- [ ] Gérer l’arrêt et la reprise des véhicules en fonction des feux rouges.
-- [ ] Implémenter la logique de changement d’état des feux pour éviter la congestion (contrôle du nombre de véhicules dans l'intersection).
+ ☐ Créer une boucle de simulation pour faire avancer les véhicules et vérifier les conditions de collision et de feu de circulation.
+ ☐ Gérer l’arrêt et la reprise des véhicules en fonction des feux rouges.
+ ☐ Implémenter la logique de changement d’état des feux pour éviter la congestion (contrôle du nombre de véhicules dans l'intersection).
 
 ### 5. Amélioration de l'Expérience Visuelle
-- [ ] Ajouter des couleurs distinctes pour les véhicules en fonction de leur direction ou itinéraire choisi.
-- [ ] Ajouter des animations simples pour le déplacement des véhicules.
-- [ ] Afficher les informations sur le trafic (nombre de véhicules en attente, feu rouge/vert, etc.).
+ ☐ Ajouter des couleurs distinctes pour les véhicules en fonction de leur direction ou itinéraire choisi.
+ ☐ Ajouter des animations simples pour le déplacement des véhicules.
+ ☐ Afficher les informations sur le trafic (nombre de véhicules en attente, feu rouge/vert, etc.).
 
 ### 6. Test et Débogage
-- [ ] Tester la génération de véhicules à partir de différentes directions.
-- [ ] Tester les règles de sécurité (arrêt aux feux, distance de sécurité entre véhicules).
-- [ ] Tester la gestion des feux et la fluidité du trafic.
+ ☐ Tester la génération de véhicules à partir de différentes directions.
+ ☐ Tester les règles de sécurité (arrêt aux feux, distance de sécurité entre véhicules).
+ ☐ Tester la gestion des feux et la fluidité du trafic.
   
 ### 7. Optimisation
-- [ ] Optimiser le code pour améliorer les performances de la simulation (éviter les ralentissements en cas de forte affluence).
-- [ ] Gérer l'optimisation de la distance de sécurité et du contrôle des feux pour éviter les embouteillages.
+ ☐ Optimiser le code pour améliorer les performances de la simulation (éviter les ralentissements en cas de forte affluence).
+ ☐ Gérer l'optimisation de la distance de sécurité et du contrôle des feux pour éviter les embouteillages.
