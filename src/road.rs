@@ -39,20 +39,17 @@ impl Road {
         canvas.fill_rect(road_rect).unwrap();
     
         canvas.set_draw_color(Color::RGB(255, 255, 255));
-
-        match self.orientation {
-            Orientation::Vertical => {
-                canvas.draw_line((self.start_x, self.start_y), (self.start_x, self.start_y + self.length)).unwrap();
-                canvas.draw_line((self.start_x + self.width as i32, self.start_y), (self.start_x + self.width as i32, self.start_y + self.length)).unwrap();
-            },
-            Orientation::Horizontal => {
-                canvas.draw_line((self.start_x, self.start_y), (self.start_x + self.length as i32, self.start_y)).unwrap();
-                canvas.draw_line((self.start_x, self.start_y + self.width as i32), (self.start_x + self.length as i32, self.start_y + self.width as i32)).unwrap();
-            }
-        }    
-        canvas.draw_line((350, 0), (350, 0 + 800)).unwrap();
-        canvas.draw_line((400 + 0 as i32, 0), (400 + 0 as i32, 0 + 800)).unwrap();
-        canvas.draw_line((450 + 0 as i32, 0), (450 + 0 as i32, 0 + 800)).unwrap();
-    }    
+    
+        // Horizontal lines
+        if let Orientation::Horizontal = self.orientation {
+            canvas.draw_line((self.start_x, self.start_y), (self.start_x + self.length as i32, self.start_y)).unwrap();
+            canvas.draw_line((self.start_x, self.start_y + self.width as i32), (self.start_x + self.length as i32, self.start_y + self.width as i32)).unwrap();
+        }
+    
+        // Vertical lines
+        for x in [350, 400, 450].iter() {
+            canvas.draw_line((*x, 0), (*x, 800)).unwrap();
+        }
+    } 
 }
 
