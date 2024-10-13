@@ -14,20 +14,21 @@ pub enum Direction {
     West,
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub enum TurnDirection {
     Left,
     Right,
     Straight,
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Vehicle {
     pub x: i32,
     pub y: i32,
     pub speed: f32,
     pub direction: Direction,
     pub turn: TurnDirection,
+    pub has_turned: bool,
     pub safe_distance: f32,
 }
 
@@ -39,71 +40,153 @@ impl Vehicle {
             speed: 1.0,
             direction,
             turn: Self::random_turn_direction(),
-            safe_distance: 50.0,
+            has_turned: false,
+            safe_distance: 100.0,
         }
     }
 
     pub fn update(&mut self, vehicles: &[Vehicle]) {
         let can_move = self.can_move_safely(vehicles);
-        // println!("{}", can_move);
-        let (coordinate, limit, forward, backward, perpendicular) = match self.direction {
-            Direction::North => (&mut self.y, 355, -1, 1, &mut self.x),
-            Direction::South => (&mut self.y, 405, 1, -1, &mut self.x),
-            Direction::East => (&mut self.x, 405, 1, -1, &mut self.y),
-            Direction::West => (&mut self.x, 355, -1, 1, &mut self.y),
-        };
 
         if can_move {
-            if (self.direction == Direction::North || self.direction == Direction::West) && *coordinate > limit
-                || (self.direction == Direction::South || self.direction == Direction::East) && *coordinate < limit
-            {
-                *coordinate += forward * self.speed as i32;
-            } else {
-                // Handle turns
-                match self.turn {
-                    TurnDirection::Left => *perpendicular += self.speed as i32,
-                    TurnDirection::Right => *perpendicular += backward * self.speed as i32,
-                    TurnDirection::Straight => *coordinate += forward * self.speed as i32,
+            if self.speed == 0.0 {
+                self.speed = 1.0;
+            }
+
+            match self.direction {
+                Direction::North => {
+                    let virage = if self.turn == TurnDirection::Right {
+                        355
+                    } else {
+                        405
+                    };
+                    if self.y > virage {
+                        self.y -= self.speed as i32;
+                    } else {
+                        match self.turn {
+                            TurnDirection::Left => {
+                                self.x += self.speed as i32;
+                                self.has_turned = true;
+                            }
+                            TurnDirection::Right => {
+                                self.x -= self.speed as i32;
+                                self.has_turned = true;
+                            }
+                            TurnDirection::Straight => self.y -= self.speed as i32,
+                        }
+                    }
+                }
+
+                Direction::South => {
+                    let virage = if self.turn == TurnDirection::Left {
+                        355
+                    } else {
+                        405
+                    };
+                    if self.y < virage {
+                        self.y += self.speed as i32;
+                    } else {
+                        match self.turn {
+                            TurnDirection::Left => {
+                                self.x -= self.speed as i32;
+                                self.has_turned = true;
+                            }
+                            TurnDirection::Right => {
+                                self.x += self.speed as i32;
+                                self.has_turned = true;
+                            }
+                            TurnDirection::Straight => self.y += self.speed as i32,
+                        }
+                    }
+                }
+
+                Direction::East => {
+                    let virage = if self.turn == TurnDirection::Left {
+                        355
+                    } else {
+                        405
+                    };
+                    if self.x < virage {
+                        self.x += self.speed as i32;
+                    } else {
+                        match self.turn {
+                            TurnDirection::Left => {
+                                self.y += self.speed as i32;
+                                self.has_turned = true;
+                            }
+                            TurnDirection::Right => {
+                                self.y -= self.speed as i32;
+                                self.has_turned = true;
+                            }
+                            TurnDirection::Straight => self.x += self.speed as i32,
+                        }
+                    }
+                }
+
+                Direction::West => {
+                    let virage = if self.turn == TurnDirection::Left {
+                        355
+                    } else {
+                        405
+                    };
+                    if self.x > virage {
+                        self.x -= self.speed as i32;
+                    } else {
+                        match self.turn {
+                            TurnDirection::Left => {
+                                self.y += self.speed as i32;
+                                self.has_turned = true;
+                            }
+                            TurnDirection::Right => {
+                                self.y -= self.speed as i32;
+                                self.has_turned = true;
+                            }
+                            TurnDirection::Straight => self.x -= self.speed as i32,
+                        }
+                    }
                 }
             }
         } else {
-            self.speed = 0.0;
+            self.speed = (self.speed - 0.1).max(0.0);
         }
     }
 
     fn can_move_safely(&self, vehicles: &[Vehicle]) -> bool {
         vehicles.iter().all(|other| {
             if self as *const _ == other as *const _ {
-                return true; 
+                return true;
             }
             self.is_safe_distance(other)
         })
     }
 
     pub fn is_safe_distance(&self, other: &Vehicle) -> bool {
+        if self.direction != other.direction || self.has_turned != other.has_turned{
+            return true;
+        }
+
         let distance = match self.direction {
             Direction::North | Direction::South => (self.y - other.y).abs(),
             Direction::East | Direction::West => (self.x - other.x).abs(),
         };
-        println!("Direction de self: {:?}, Direction de other: {:?}", self.direction, other.direction);
-        println!("Distance calculée: {}", distance);
-    
-        if distance != 0  {
-            return distance >= self.safe_distance as i32
+
+        // println!("self {:?}, other {:?}", self.has_turned, other.has_turned);
+        if distance != 0 {
+            if !(distance >= self.safe_distance as i32) {
+                println!("self {:?}, other {:?}", self.direction, other.direction);
+                println!("in {}", "stop");
+            }
+            distance >= self.safe_distance as i32
+        } else {
+            true
         }
-        true
     }
-    
 
     pub fn stop_at_red_light(&mut self, traffic_light: &TrafficLight) {
-        println!("{}", "red stop");
-        println!("state {}", traffic_light.is_green);
-        println!("direction {:?}", traffic_light.direction);
         if !traffic_light.is_green {
-            println!("{}", "is red");
+            // println!("direction {:?}, traffic_light: {:?}", self.direction, traffic_light);
             self.speed = 0.0;
         } else if self.speed == 0.0 {
-            println!("{}", "is green");
             self.speed = 1.0;
         }
     }
