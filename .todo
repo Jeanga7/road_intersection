@@ -13,10 +13,10 @@ Créer une classe ou une structure pour représenter une route avec deux voies d
  ✔ Définir une méthode pour dessiner les routes à l’écran. @done(24-10-13 03:35)
 
 #### 2.2. Feux de circulation
- ☐ Créer une classe ou structure pour représenter un feu de circulation (deux états : rouge et vert).
- ☐ Positionner les feux à chaque entrée de l'intersection.
+ ✔ Créer une classe ou structure pour représenter un feu de circulation (deux états : rouge et vert). @done(24-10-13 05:01)
+ ✔ Positionner les feux à chaque entrée de l'intersection. @done(24-10-13 05:01)
+ ✔ Ajouter une méthode pour dessiner les feux à l’écran avec des couleurs distinctes. @done(24-10-13 05:01)
  ☐ Définir un système de contrôle des feux de circulation (algorithme pour changer les états des feux en fonction du temps ou du nombre de véhicules).
- ☐ Ajouter une méthode pour dessiner les feux à l’écran avec des couleurs distinctes.
 
 #### 2.3. Véhicules
  ☐ Créer une classe ou structure pour représenter un véhicule (couleur, direction, vitesse, route choisie).

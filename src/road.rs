@@ -4,6 +4,7 @@ use sdl2::video::Window;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 
+#[derive(Copy, Clone, PartialEq)]
 pub struct Road {
     pub start_x: i32,        
     pub start_y: i32,        
@@ -12,6 +13,7 @@ pub struct Road {
     pub orientation: Orientation, 
 }
 
+#[derive(Copy, Clone, PartialEq)]
 pub enum Orientation {
     Vertical,
     Horizontal,

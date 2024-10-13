@@ -4,7 +4,7 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::pixels::Color;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub struct TrafficLight {
     pub is_green: bool,
     pub change_color: bool, 
@@ -34,6 +34,7 @@ impl TrafficLight {
     }
 }
 
+#[derive(Clone, PartialEq)]
 pub struct Intersection {
     pub traffic_lights: Vec<TrafficLight>, 
     pub current_light: usize,
