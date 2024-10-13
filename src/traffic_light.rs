@@ -14,8 +14,8 @@ pub struct TrafficLight {
 impl TrafficLight {
     pub fn new() -> Self {
         TrafficLight {
-            is_green: true,
-            change_color: false, 
+            is_green: false,
+            change_color: true, 
             counter: 0,
         }
     }
@@ -55,17 +55,16 @@ impl Intersection {
     }
 
     pub fn update(&mut self) {
-        if let Some(light) = self.traffic_lights.get_mut(self.current_light) {
-            light.update();
-            if light.counter >= 1000 { 
-                light.change_color = false; 
-                light.counter = 0; 
+        self.counter += 1;
+        if self.counter >= 1000 {
+            self.counter = 0;
+            self.change_light = true;
+        }
 
-                if self.change_light {
-                    self.current_light = (self.current_light + 1) % self.traffic_lights.len(); // Passer au feu suivant
-                    self.change_light = false;
-                }
-            }
+        if self.change_light {
+            self.current_light = (self.current_light + 1) % self.traffic_lights.len();
+            self.traffic_lights[self.current_light].toggle();
+            self.change_light = false;
         }
     }
 

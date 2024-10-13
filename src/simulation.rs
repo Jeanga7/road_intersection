@@ -98,6 +98,33 @@ impl Simulation {
         true
     }
 
+    pub fn update_vehicle_priority(&mut self, vehicle: &mut Vehicle) {
+        for other_vehicle in &self.vehicles {
+            if other_vehicle != vehicle && !vehicle.is_safe_distance(other_vehicle) {
+                match (vehicle.direction, other_vehicle.direction) {
+                    (Direction::West, Direction::North) => {
+                        vehicle.speed = 0.0;
+                    }
+                    (Direction::North, Direction::East) => {
+                        vehicle.speed = 0.0;
+                    }
+                    (Direction::East, Direction::South) => {
+                        vehicle.speed = 0.0;
+                    }
+                    (Direction::South, Direction::West) => {
+                        vehicle.speed = 0.0; 
+                    }
+                    (dir1, dir2) if dir1 == dir2 => {
+                        vehicle.speed = 1.0; 
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+    
+    
+
     pub fn is_vehicle_at_traffic_light(vehicle: &Vehicle) -> bool {
         let distance = match vehicle.direction {
             Direction::North | Direction::South => (vehicle.y - 400).abs(),

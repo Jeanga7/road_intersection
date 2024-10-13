@@ -46,7 +46,7 @@ impl Vehicle {
     pub fn update(&mut self) {
         match self.direction {
             Direction::North => {
-                let virage = if self.turn == TurnDirection::Right { 350 } else { 400 };
+                let virage = if self.turn == TurnDirection::Right { 355 } else { 405 };
             
                 if self.y > virage {
                     self.y -= self.speed as i32;
@@ -60,7 +60,7 @@ impl Vehicle {
             }
             
             Direction::South => {
-                let virage = if self.turn == TurnDirection::Left { 350 } else { 400 };
+                let virage = if self.turn == TurnDirection::Left { 355 } else { 405 };
                 if self.y < virage {
                     self.y += self.speed as i32;
                 } else {
@@ -72,7 +72,7 @@ impl Vehicle {
                 }
             }
             Direction::East => {
-                let virage = if self.turn == TurnDirection::Left { 350 } else { 400 };
+                let virage = if self.turn == TurnDirection::Left { 355 } else { 405 };
                 if self.x < virage {
                     self.x += self.speed as i32;
                 } else {
@@ -84,7 +84,7 @@ impl Vehicle {
                 }
             }
             Direction::West => {
-                let virage = if self.turn == TurnDirection::Left { 350 } else { 400 };
+                let virage = if self.turn == TurnDirection::Left { 355 } else { 405 };
                 if self.x > virage {
                     self.x -= self.speed as i32;
                 } else {
@@ -108,8 +108,11 @@ impl Vehicle {
     pub fn stop_at_red_light(&mut self, traffic_light: &TrafficLight) {
         if !traffic_light.is_green {
             self.speed = 0.0;
+        } else if self.speed == 0.0 {
+            self.speed = 1.0;
         }
     }
+    
 
     pub fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) {
         let color = self.get_color_based_on_route();
