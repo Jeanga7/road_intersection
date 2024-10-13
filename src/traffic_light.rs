@@ -4,29 +4,31 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::pixels::Color;
 
+use crate::vehicle::Direction;
+
 #[derive(Copy, Clone, PartialEq)]
 pub struct TrafficLight {
     pub is_green: bool,
-    pub change_color: bool, 
-    pub counter: u32,
+    pub direction: Direction,
+    pub timer: u32,
 }
 
+
 impl TrafficLight {
-    pub fn new() -> Self {
+    pub fn new(direction: Direction) -> Self {
         TrafficLight {
             is_green: false,
-            change_color: true, 
-            counter: 0,
+            direction,
+            timer: 0,
         }
     }
 
-    pub fn update(&mut self) {
-        if self.change_color {
-            self.toggle(); 
-            self.change_color = false;
+    pub fn update(&mut self, cycle_duration: u32) {
+        self.timer += 1;
+        if self.timer >= cycle_duration {
+            self.toggle();
+            self.timer = 0;
         }
-        
-        self.counter += 1; 
     }
 
     pub fn toggle(&mut self) {
@@ -36,36 +38,43 @@ impl TrafficLight {
 
 #[derive(Clone, PartialEq)]
 pub struct Intersection {
-    pub traffic_lights: Vec<TrafficLight>, 
-    pub current_light: usize,
-    pub change_light: bool,
-    pub counter: u32,
+    pub traffic_lights: Vec<TrafficLight>,
+    pub cycle_duration: u32,
+    pub current_phase: u32,
 }
+
 
 impl Intersection {
     pub fn new() -> Self {
-        let lights = vec![TrafficLight::new(); 4];
+        let lights = vec![
+            TrafficLight::new(Direction::North),
+            TrafficLight::new(Direction::South),
+            TrafficLight::new(Direction::East),
+            TrafficLight::new(Direction::West),
+        ];
 
         Intersection {
             traffic_lights: lights,
-            current_light: 0,
-            change_light: false, 
-            counter: 0,
+            cycle_duration: 2000,
+            current_phase: 0,
         }
     }
 
     pub fn update(&mut self) {
-        self.counter += 1;
-        if self.counter >= 1000 {
-            self.counter = 0;
-            self.change_light = true;
+        self.current_phase += 1;
+        if self.current_phase >= self.cycle_duration * 2 {
+            self.current_phase = 0;
         }
 
-        if self.change_light {
-            self.current_light = (self.current_light + 1) % self.traffic_lights.len();
-            self.traffic_lights[self.current_light].toggle();
-            self.change_light = false;
+        for light in &mut self.traffic_lights {
+            light.update(self.cycle_duration);
         }
+
+        let is_north_south_green = self.current_phase < self.cycle_duration;
+        self.traffic_lights[0].is_green = !is_north_south_green; 
+        self.traffic_lights[1].is_green = is_north_south_green; 
+        self.traffic_lights[2].is_green = is_north_south_green;
+        self.traffic_lights[3].is_green = !is_north_south_green;
     }
 
     pub fn draw(&self, canvas: &mut Canvas<Window>) {
