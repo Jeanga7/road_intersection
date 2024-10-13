@@ -56,10 +56,10 @@ pub struct Intersection {
 impl Intersection {
     pub fn new() -> Self {
         let lights = vec![
-            TrafficLight::new(Direction::North),
-            TrafficLight::new(Direction::East),
             TrafficLight::new(Direction::South),
+            TrafficLight::new(Direction::East),
             TrafficLight::new(Direction::West),
+            TrafficLight::new(Direction::North),
         ];
 
         Intersection {
@@ -78,35 +78,33 @@ impl Intersection {
             return;
         }
 
-        let mut next_cross_lane = None;
+        let mut next_cross_direction = None;
         let mut min_distance = f32::MAX;
         let mut max_vehicle_count = 0;
 
-        for (i, light) in self.traffic_lights.iter().enumerate() {
+        for light in &self.traffic_lights {
             let waiting_vehicles: Vec<&Vehicle> = vehicles.iter()
                 .filter(|v| v.direction == light.direction && self.is_vehicle_waiting(v))
                 .collect();
-            // println!("wainting {:?}", waiting_vehicles);
-
+    
             if !waiting_vehicles.is_empty() {
                 let closest_distance = waiting_vehicles.iter()
                     .map(|v| self.distance_to_stop_line(v))
                     .min_by(|a, b| a.partial_cmp(b).unwrap())
                     .unwrap();
-
+    
                 if closest_distance <= min_distance && waiting_vehicles.len() >= max_vehicle_count {
                     min_distance = closest_distance;
                     max_vehicle_count = waiting_vehicles.len();
-                    next_cross_lane = Some(i);
+                    next_cross_direction = Some(light.direction);
                 }
             }
         }
-
-        // println!("wainting {:?}", next_cross_lane);
-
-        if let Some(lane_index) = next_cross_lane {
-            for (i, light) in self.traffic_lights.iter_mut().enumerate() {
-                if i == lane_index {
+    
+        println!("wainting {:?}", next_cross_direction);
+        if let Some(cross_direction) = next_cross_direction {
+            for light in &mut self.traffic_lights {
+                if light.direction == cross_direction {
                     light.is_green = true;
                     light.stage = LaneStage::Crossing;
                 } else {

@@ -173,8 +173,8 @@ impl Vehicle {
         // println!("self {:?}, other {:?}", self.has_turned, other.has_turned);
         if distance != 0 {
             if !(distance >= self.safe_distance as i32) {
-                println!("self {:?}, other {:?}", self.direction, other.direction);
-                println!("in {}", "stop");
+                // println!("self {:?}, other {:?}", self.direction, other.direction);
+                // println!("in {}", "stop");
             }
             distance >= self.safe_distance as i32
         } else {
