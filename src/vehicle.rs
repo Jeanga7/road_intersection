@@ -1,11 +1,10 @@
-extern crate sdl2;
 extern crate rand;
+extern crate sdl2;
 
-
-use sdl2::pixels::Color;
-use sdl2::rect::Rect;
 use crate::traffic_light::TrafficLight;
 use rand::Rng;
+use sdl2::pixels::Color;
+use sdl2::rect::Rect;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum Direction {
@@ -34,11 +33,10 @@ pub struct Vehicle {
 
 impl Vehicle {
     pub fn new(x: i32, y: i32, direction: Direction) -> Self {
-        let mut rng = rand::thread_rng();
         Vehicle {
             x,
             y,
-            speed: rng.gen_range(1.0..3.0),
+            speed: 1.0,
             direction,
             turn: Self::random_turn_direction(),
             safe_distance: 50.0,
@@ -47,10 +45,56 @@ impl Vehicle {
 
     pub fn update(&mut self) {
         match self.direction {
-            Direction::North => self.y -= self.speed as i32,
-            Direction::South => self.y += self.speed as i32,
-            Direction::East => self.x += self.speed as i32,
-            Direction::West => self.x -= self.speed as i32,
+            Direction::North => {
+                let virage = if self.turn == TurnDirection::Right { 350 } else { 400 };
+            
+                if self.y > virage {
+                    self.y -= self.speed as i32;
+                } else {
+                    match self.turn {
+                        TurnDirection::Left => self.x += self.speed as i32,
+                        TurnDirection::Right => self.x -= self.speed as i32,
+                        _ => self.y -= self.speed as i32,
+                    }
+                }
+            }
+            
+            Direction::South => {
+                let virage = if self.turn == TurnDirection::Left { 350 } else { 400 };
+                if self.y < virage {
+                    self.y += self.speed as i32;
+                } else {
+                    match self.turn {
+                        TurnDirection::Left => self.x -= self.speed as i32,
+                        TurnDirection::Right => self.x += self.speed as i32,
+                        _ => self.y += self.speed as i32,
+                    }
+                }
+            }
+            Direction::East => {
+                let virage = if self.turn == TurnDirection::Left { 350 } else { 400 };
+                if self.x < virage {
+                    self.x += self.speed as i32;
+                } else {
+                    match self.turn {
+                        TurnDirection::Left => self.y += self.speed as i32,
+                        TurnDirection::Right => self.y -= self.speed as i32,
+                        _ => self.x += self.speed as i32,
+                    }
+                }
+            }
+            Direction::West => {
+                let virage = if self.turn == TurnDirection::Left { 350 } else { 400 };
+                if self.x > virage {
+                    self.x -= self.speed as i32;
+                } else {
+                    match self.turn {
+                        TurnDirection::Left => self.y += self.speed as i32,
+                        TurnDirection::Right => self.y -= self.speed as i32,
+                        _ => self.x -= self.speed as i32,
+                    }
+                }
+            }
         }
     }
 
@@ -70,15 +114,18 @@ impl Vehicle {
     pub fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) {
         let color = self.get_color_based_on_route();
         canvas.set_draw_color(color);
-        let vehicle_rect = Rect::new(self.x, self.y, 20, 10);
+        let vehicle_rect = match self.direction {
+            Direction::East | Direction::West => Rect::new(self.x, self.y - 20, 40, 40),
+            Direction::North | Direction::South => Rect::new(self.x-20, self.y, 40, 40),
+        };
         canvas.fill_rect(vehicle_rect).unwrap();
     }
 
     fn get_color_based_on_route(&self) -> Color {
         match self.turn {
-            TurnDirection::Left => Color::RGB(255, 0, 0),
-            TurnDirection::Right => Color::RGB(255, 255, 0),
-            TurnDirection::Straight => Color::RGB(0, 255, 0),
+            TurnDirection::Left => Color::RGB(255, 0, 0), // rouge a gauche
+            TurnDirection::Right => Color::RGB(255, 255, 0), //jaune - a droite
+            TurnDirection::Straight => Color::RGB(0, 255, 0), //vert - tout droit
         }
     }
 

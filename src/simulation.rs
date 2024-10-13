@@ -14,15 +14,15 @@ pub struct Simulation {
 
 impl Simulation {
     pub fn new() -> Self {
-        let vertical_road1 = Road::new(350, 0, 50, 800, Orientation::Vertical);
-        let vertical_road2 = Road::new(400, 0, 50, 800, Orientation::Vertical);
-        let horizontal_road1 = Road::new(0, 350, 50, 800, Orientation::Horizontal);
-        let horizontal_road2 = Road::new(0, 400, 50, 800, Orientation::Horizontal);
+        let vertical_road1 = Road::new(400, 0, 50, 800, Orientation::Vertical);
+        let vertical_road2 = Road::new(350, 0, 50, 800, Orientation::Vertical);
+        let horizontal_road1 = Road::new(0, 400, 50, 800, Orientation::Horizontal);
+        let horizontal_road2 = Road::new(0, 350, 50, 800, Orientation::Horizontal);
 
         Simulation {
             roads: vec![
-                vertical_road1,
                 vertical_road2,
+                vertical_road1,
                 horizontal_road1,
                 horizontal_road2,
             ],
@@ -70,8 +70,8 @@ impl Simulation {
 
     pub fn spawn_vehicle(&mut self, direction: Direction) {
         let (x, y) = match direction {
-            Direction::North => (375, 790),
-            Direction::South => (425, 10),
+            Direction::North => (425, 790),
+            Direction::South => (375, 10),
             Direction::East => (10, 425),
             Direction::West => (790, 375),
         };
