@@ -128,7 +128,7 @@ impl Intersection {
         match vehicle.direction {
             Direction::North | Direction::South => /* (vehicle.y - stop_line).abs() < 50 &&*/ vehicle.speed == 0.0,
             Direction::East | Direction::West => /* (vehicle.x - stop_line).abs() < 50 &&*/ vehicle.speed == 0.0,
-        }
+        } 
     }
 
     fn distance_to_stop_line(&self, vehicle: &Vehicle) -> f32 {
